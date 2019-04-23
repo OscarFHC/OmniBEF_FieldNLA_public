@@ -7,9 +7,10 @@ Data in this repository:
 
 Scripts in this repository:
 
-(1) `NLA_HM_ModelSelect_brms.R`: 
+(1) `NLA_HM_ModelSelect_brms.R`: \\
   model selection processes for NLA dataset analyses using [*brms*](https://github.com/paul-buerkner/brms) package)
-(2) `NLA_HM_stan.R` and `HM_OmniNoRegion_Reg.stan`
+(2) `NLA_HM_stan.R` and `HM_OmniNoRegion_Reg.stan`//
   R and stan scripts for hierarchical model, where all effects are designed to be region-dependent (like random effect model) and effects of zooplankotn species richness (_zpSR_) is designed to quadratically depend on proportion of omnivores (_Omnip_)
 (3) `Figs_FieldNLA.R`:
+
   Final R script for making all plots and tables in the manuscript. 
