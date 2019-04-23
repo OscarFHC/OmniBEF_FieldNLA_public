@@ -108,10 +108,10 @@ if (!require(ggfortify)) {
 
 ######### NLA analyses #########
 ##### Reading data from Github ######
-bio07_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/NLA_Data/master/Final_cleaned/bio07_scaled.csv", 
+bio07_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio07_scaled.csv", 
                        header = TRUE, stringsAsFactors = FALSE, fill = TRUE) 
 
-bio12_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/NLA_Data/master/Final_cleaned/bio12_scaled.csv", 
+bio12_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio12_scaled.csv", 
                        header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
 ##### Reading data from Github ######
 
@@ -219,8 +219,10 @@ summary(Mod1_12)
 
 ######### Field analyses #########
 ##### Reading data from Github ######
-Field.scale <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_scale.csv", sep = ",", header = TRUE) 
-Field.raw <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_raw.csv", sep = ",", header = TRUE)
+Field.scale <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_scale.csv", 
+                          sep = ",", header = TRUE) 
+Field.raw <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_raw.csv", 
+                        sep = ",", header = TRUE)
 ##### Reading data from Github ######
 
 ##### PCA on envi variables #####
@@ -260,13 +262,13 @@ fitMeasures(mod_lavaan)
 
 ######### Fig 3_zpSR and G VS Omni #########
 ##### preping zp composition data #####
-Bio.raw <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_raw.csv", sep = ",", header = TRUE) %>%
+Bio.raw <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_raw.csv", sep = ",", header = TRUE) %>%
   subset(select = c(Samp_ID, zpSR, phySR, zpD, phyB, All_Omni_prop, All_gzp, mzp_gzp, pH, Temp, Cond, PAR, TN_mean, TP_mean)) %>%
   mutate(Samp_ID = as.character(Samp_ID))
 colnames(Bio.raw) <- c("Samp_ID", "zpSR", "phySR", "zpD", "phyB", "Omnip", "Gzp", "mzpGzp",
                        "pH", "Temp", "Cond", "PAR", "TN", "TP")
 
-ZP_ID <- read.csv(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/SPcount/Field_zpCount.csv", 
+ZP_ID <- read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
                   sep = ",", header = TRUE, fill = TRUE) %>%
   mutate(Samp_ID = as.character(Samp_ID)) %>%
   subset(Samp_ID %in% Bio.raw$Samp_ID)
@@ -303,7 +305,7 @@ for (i in 1 : length(unique(ZP_ID$Samp_ID))){
 
 ZPcom <- ZPcom %>%
   right_join(Bio.raw, by = "Samp_ID") %>%
-  right_join(read.csv(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/SPcount/Field_zpCount.csv", 
+  right_join(read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
                       sep = ",", header = TRUE, fill = TRUE) %>%
                mutate(Samp_ID = as.character(Samp_ID)) %>%
                subset(Samp_ID %in% Bio.raw$Samp_ID) %>%
@@ -350,21 +352,21 @@ B_Gzp_Omni <- ZPcom %>%
 Omni.p <- plot_grid(A_zpSR_Omni, B_Gzp_Omni, ncol = 2, labels = c("a.", "b."), label_size = 30) + 
   draw_label(label = expression("Omnivorous consumption (" * italic(Omni) * "; % microzooplankton density consumed)"),
              x = 0.5, y = 0.02, hjust = 0.5, vjust = 0.5, colour = "black", size = 42)
-ggsave(plot = Omni.p,
-       file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/Fig3_Omni.tiff",
-       width = 60, height = 32, units = c("cm"),
-       dpi = 600)
+# ggsave(plot = Omni.p,
+#        file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/Fig3_Omni.tiff",
+#        width = 60, height = 32, units = c("cm"),
+#        dpi = 600)
 ######### Fig 3_zpSR and G VS Omni #########
 
-######### Fig 4_Gmzp and Cyclopidae VS Omni #########
+######### Fig 4_ ZP taxa (Cyclops, Daphnia) VS Omni #########
 ##### preping zp composition data #####
-Bio.raw <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_raw.csv", sep = ",", header = TRUE) %>%
+Bio.raw <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_raw.csv", sep = ",", header = TRUE) %>%
   subset(select = c(Samp_ID, zpSR, phySR, zpD, phyB, All_Omni_prop, All_gzp, mzp_gzp, pH, Temp, Cond, PAR, TN_mean, TP_mean)) %>%
   mutate(Samp_ID = as.character(Samp_ID))
 colnames(Bio.raw) <- c("Samp_ID", "zpSR", "phySR", "zpD", "phyB", "Omnip", "Gzp", "mzpGzp",
                        "pH", "Temp", "Cond", "PAR", "TN", "TP")
 
-ZP_ID <- read.csv(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/SPcount/Field_zpCount.csv", 
+ZP_ID <- read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
                   sep = ",", header = TRUE, fill = TRUE) %>%
   mutate(Samp_ID = as.character(Samp_ID)) %>%
   subset(Samp_ID %in% Bio.raw$Samp_ID)
@@ -401,7 +403,7 @@ for (i in 1 : length(unique(ZP_ID$Samp_ID))){
 
 ZPcom <- ZPcom %>%
   right_join(Bio.raw, by = "Samp_ID") %>%
-  right_join(read.csv(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/SPcount/Field_zpCount.csv", 
+  right_join(read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
                       sep = ",", header = TRUE, fill = TRUE) %>%
                mutate(Samp_ID = as.character(Samp_ID)) %>%
                subset(Samp_ID %in% Bio.raw$Samp_ID) %>%
@@ -429,10 +431,10 @@ zp_rank.p <- zpSAD_ord %>%
         legend.position = c(0, 0.95), 
         legend.title = element_text(size = 24), 
         legend.text = element_text(size = 24))
-ggsave(zp_rank.p,
-       file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/SupFigs/FigS3_zp_AbundRank.tiff",
-       width = 58, height = 32, units = c("cm"),
-       dpi = 600)
+# ggsave(zp_rank.p,
+#        file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/SupFigs/FigS3_zp_AbundRank.tiff",
+#        width = 58, height = 32, units = c("cm"),
+#        dpi = 600)
 zpSAD_ord <- zpSAD_ord %>% mutate(prop = avgDen/sum(avgDen))
 sum(zpSAD_ord$prop[1:10])
 ##### zp abund rank #####
@@ -477,35 +479,12 @@ B_Daphnia_Omni <- ZPcom %>%
         axis.title.y = element_text(size = 42, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
         plot.margin = margin(t = 42, r = 12, b = 24, l = 12, "pt"))
 Omni_zp <- plot_grid(A_Cyclops_Omni, B_Daphnia_Omni, ncol = 2, labels = c("a.", "b."), label_size = 30)
-ggsave(plot = Omni_zp,
-       file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/Fig4_Omni_zp.jpeg",
-       width = 60, height = 32, units = c("cm"),
-       dpi = 600)
-##### panel a Cyclopidae ~ Omni #####
-##### panel c Gmzp ~ Omni #####
-summary(lm(Omnip ~ mzpGzp, data = ZPcom))
-cor.test(ZPcom$Omnip, ZPcom$mzpGzp)
-C_mzpGzp_Omni <- ZPcom %>%
-  ggplot() +
-  geom_point(aes(x = Omnip*100, y = mzpGzp*100), size = 4) +
-  geom_smooth(aes(x = Omnip*100, y = mzpGzp*100), se = FALSE, method = "lm", color = "black", size = 3, linetype = "dashed") + 
-  scale_x_continuous(expand = c(0, 0), limits = c(0, 75)) +
-  scale_y_continuous(expand = c(0, 0), limits = c(-2.5, 50)) +
-  labs(x = expression(atop("Omnivorous consumption (" * italic(Omni) * ";", "% microzooplankton density consumed)")),
-       y = expression(atop("% Phytoplankton biomass consumed", "by microzooplankton community (" * italic("Gmzp") * ")"))) +
-  theme(axis.text.x = element_text(size = 24),
-        axis.text.y = element_text(size = 24),
-        axis.title.x = element_text(size = 32, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
-        axis.title.y = element_text(size = 32, margin = margin(t = 24, r = 36, b = 24, l = 24, "pt")),
-        plot.margin = margin(t = 42, r = 102, b = 24, l = 24, "pt"))
-##### panel c Gmzp ~ Omni #####
-#Explain_Omni.p <- plot_grid(Omni_up, C_mzpGzp_Omni, ncol = 2, labels = c("a.", "b."), label_size = 30) 
-ggsave(plot = C_mzpGzp_Omni,
-       file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/Fig5_mzpG_Omni.jpeg",
-       width = 36, height = 32, units = c("cm"),
-       dpi = 600)
-##### panel b Omnip ~ G #####
-######### Fig 4_Gmzp and Cyclopidae VS Omni #########
+# ggsave(plot = Omni_zp,
+#        file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/Fig4_Omni_zp.jpeg",
+#        width = 60, height = 32, units = c("cm"),
+#        dpi = 600)
+##### panel a, b Cyclops, Daphnia ~ Omni #####
+######### Fig 4_ ZP taxa (Cyclops, Daphnia) VS Omni #########
 
 
 ######## Loading necessary libraries ########################################################################################
@@ -598,16 +577,16 @@ if (!require(ggfortify)) {
 ######## Loading necessary libraries ########################################################################################
 
 ######### Fig S1_NLA correlation plots ##########
-bio07_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/NLA_Data/master/Final_cleaned/bio07_scaled.csv", 
+bio07_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio07_scaled.csv", 
                        header = TRUE, stringsAsFactors = FALSE, fill = TRUE) 
-
-bio12_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/NLA_Data/master/Final_cleaned/bio12_scaled.csv", 
+bio12_scale = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio12_scaled.csv", 
                        header = TRUE, stringsAsFactors = FALSE, fill = TRUE)
-bio07_raw = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/NLA_Data/master/Final_cleaned/bio07_unscaled_raw.csv", 
+
+bio07_raw = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio07_unscaled_raw.csv", 
                      header = TRUE, stringsAsFactors = FALSE, fill = TRUE) %>%
   mutate(phyB = ln_phyDen, phySR = ln_phySRr, zpDen = ln_zpDen, zpSR = ln_zpSRr, Omni = WOmni,
          Lat = LAT_DD, TN = NTL, TP = PTL, Cond = ln_Cond, DOC = ln_DOC, Silica = ln_Silica, Temp = ln_Temp, Light = ln_Sol)
-bio12_raw = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/NLA_Data/master/Final_cleaned/bio12_unscaled_raw.csv", 
+bio12_raw = read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio12_unscaled_raw.csv", 
                      header = TRUE, stringsAsFactors = FALSE, fill = TRUE) %>%
   mutate(phyB = ln_phyDen, phySR = ln_phySRr, zpDen = ln_zpDen, zpSR = ln_zpSRr, Omni = WOmni,
          Lat = LAT_DD, TN = NTL, TP = PTL, Cond = ln_Cond, DOC = ln_DOC, Silica = ln_Silica, Temp = ln_Temp, Light = ln_Sol)
@@ -749,9 +728,8 @@ if (!require(grid)) {
 ######## Loading necessary libraries ########################################################################################
 
 ######### Site maps ##########
-Lake <- read.table(file = "D:/Research/OmniBEF_FieldExp/LakeSelection/LakeforMap.csv", sep = ",", header = TRUE)
-head(Lake)
-
+Lake <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/LakeforMap.csv", 
+                   sep = ",", header = TRUE)
 img <- readPNG("D:/Research/OmniBEF_FieldExp/flowCAM pics/home.png")
 home <- rasterGrob(img, interpolate = TRUE) 
 
@@ -805,8 +783,10 @@ USMap <- ggplot() +
 ######### Site maps ##########
 
 ######### Fig S2_Field Bio correlation plots ##########
-Dat.scale <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_scale.csv", sep = ",", header = TRUE) 
-Bio.raw <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_raw.csv", sep = ",", header = TRUE) %>%
+Dat.scale <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_scale.csv", 
+                        sep = ",", header = TRUE) 
+Bio.raw <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_raw.csv", 
+                      sep = ",", header = TRUE) %>%
   subset(select = c(Samp_ID, zpSR, phySR, zpD, phyB, All_Omni_prop, All_gzp, mzp_gzp, pH, Temp, Cond, PAR, TN_mean, TP_mean)) %>%
   mutate(Samp_ID = as.character(Samp_ID))
 colnames(Bio.raw) <- c("Samp_ID", "zpSR", "phySR", "zpD", "phyB", "Omnip", "Gzp", "mzpGzp",
@@ -842,8 +822,10 @@ pairs(cbind(log(Bio.raw[,c("phyB", "phySR", "zpD", "zpSR")]), Bio.raw[, "Omnip"]
 ######### Fig S2_Field Bio correlation plots ##########
 
 ######### Fig S2_Field Envi correlation plots ##########
-Dat_scale <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_scale.csv", sep = ",", header = TRUE)
-Dat_raw <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_raw.csv", sep = ",", header = TRUE) %>%
+Dat_scale <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_scale.csv", 
+                        sep = ",", header = TRUE)
+Dat_raw <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_raw.csv", 
+                      sep = ",", header = TRUE) %>%
   mutate(CM = log(All_gzp),
          phyB = log(phyB),
          phySR = log(phySR),
@@ -856,8 +838,6 @@ Dat_raw <- read.table(file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/Dat_raw
          PAR = log(PAR),
          TN = log(TN_mean),
          TP = log(TP_mean))
-theme_set(theme_grey(base_size=14))
-ggpairs(iris, colour="Species", params=c(labelSize=14, gridLabelSize=14))
 EnviCorr <- ggpairs(Dat_raw, 
                     column = c("Temp", "Cond", "pH", "PAR", "TN", "TP"),
                     columnLabels = c("Log(Temp)", "Log(Cond)", "Log(pH)", "Log(PAR)", "Log(TN)", "Log(TP)"),
@@ -903,9 +883,9 @@ EnviPCA23 <- autoplot(envi_PC, x = 2, y = 3, data = Dat.scale, loadings = TRUE, 
         axis.text = element_text(size = 20))
 EnviPCA <- plot_grid(EnviPCA12, EnviPCA13, EnviPCA23, scale = 0.95, ncol = 3, labels = c("b.", "c.", "d."), label_size = 30)
 FinalCorr <- plot_grid(ggmatrix_gtable(EnviCorr), EnviPCA, ncol = 1, rel_heights = c(3, 1), labels = c("a.",""), label_size = 30)
-ggsave(FinalCorr, 
-       file = "D:/Manuscript/IGP_DivEffects_MS_Figs/Field_NLA_Figs/SupFigs/FieldNLA_fs2_2_Field_EnviCorr.pdf", 
-       width = 40, height = 40, units = c("cm"), dpi = 600)
+# ggsave(FinalCorr, 
+#        file = "D:/Manuscript/IGP_DivEffects_MS_Figs/Field_NLA_Figs/SupFigs/FieldNLA_fs2_2_Field_EnviCorr.pdf", 
+#        width = 40, height = 40, units = c("cm"), dpi = 600)
 ######### Fig S2_Field Envi correlation plots ##########
 
 
