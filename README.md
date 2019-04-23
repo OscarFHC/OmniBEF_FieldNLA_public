@@ -1,4 +1,7 @@
-# OmniBEF_FieldNLA_public
+# OmniBEF_FieldNLA
+
+This repository contain the following data and code script for reproducing exactly the same figures and tables (not including the figure and table style) in the maniscript.
+
 * Data in this repository:
 
 (1) raw and scaled NLA dataset of year 2007 and year 2012 (bio07_or bio12_ ).  
