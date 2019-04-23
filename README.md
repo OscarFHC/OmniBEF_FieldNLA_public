@@ -4,9 +4,10 @@ This repository contain the following data and code script for reproducing exact
 
 * Data in this repository:
 
-(1) raw and scaled NLA dataset of year 2007 and year 2012 (bio07_or bio12_ ).  
-(2) raw and scaled data from field experiment (FieldData_).  
-(3) coordiante data from 2007 NLA dataset for selecting study sites (LakeforMap.csv).   
+(1) raw and scaled NLA dataset of year 2007 and year 2012 (bio07_ or bio12_.csv ).  
+(2) coordiante data from 2007 NLA dataset for selecting study sites (LakeforMap.csv).   
+(3) raw and scaled data from field experiment (FieldData_.csv).  
+(4) zooplankotn count data from the field experiment (Field_zpCount.csv)
 
 * Scripts in this repository:
 
