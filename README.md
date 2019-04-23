@@ -1,6 +1,6 @@
 # OmniBEF_FieldNLA
 
-This repository contain the following data and code script for reproducing exactly the same figures and tables (not including the figure and table style) in the maniscript.
+This repository contain the following data and code script for reproducing exactly the same figures and tables (maybe not including the figure and table style) in the maniscript.
 
 * Data in this repository:
 
