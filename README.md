@@ -15,8 +15,7 @@ This repository contain the following data and code script for reproducing exact
   model selection processes for NLA dataset analyses using [*brms*](https://github.com/paul-buerkner/brms) package).  
 (2) [`Figs_FieldNLA.R`](https://github.com/OscarFHC/OmniBEF_FieldNLA_public/blob/master/Figs_FieldNLA.R)  
   Final R script for making all plots and tables in the manuscript.  
-(3)*NOT used in the manuscript but included here in case anyone is interested*  
-[`NLA_HM_stan.R`](https://github.com/OscarFHC/OmniBEF_FieldNLA_public/blob/master/NLA_HM_stan.R) and [`HM_OmniNoRegion_Reg.stan`](https://github.com/OscarFHC/OmniBEF_FieldNLA_public/blob/master/HM_OmniNoRegion_Reg.stan)    
-  R and stan scripts for hierarchical model, where all effects are designed to be region-dependent (like random effect model) and effects of zooplankotn species richness (_zpSR_) is designed to quadratically depend on proportion of omnivores (_Omnip_).    
+(3) [`NLA_HM_stan.R`](https://github.com/OscarFHC/OmniBEF_FieldNLA_public/blob/master/NLA_HM_stan.R) and [`HM_OmniNoRegion_Reg.stan`](https://github.com/OscarFHC/OmniBEF_FieldNLA_public/blob/master/HM_OmniNoRegion_Reg.stan)    
+  R and stan scripts for hierarchical model, where all effects are designed to be region-dependent (like random effect model) and effects of zooplankotn species richness (_zpSR_) is designed to quadratically depend on proportion of omnivores (_Omnip_). These codes are *NOT used in the manuscript but included here in case anyone is interested*      
   
 * All figures should be reproducible from the scripts and data in the repository.   
