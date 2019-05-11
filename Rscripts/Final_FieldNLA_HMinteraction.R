@@ -216,8 +216,8 @@ ZPcom <- ZPcom %>%
 
 ######## HM model ###########################################################################################################
 ##### running HM model #####
-mm_Gzp <- model.matrix(~ zpSR + zpSR*Omnip + phyB + zpD + Envi1 + Envi2 + Envi3, data = ZPcom)
-mm_b_intn = model.matrix(~ domzp1 + domzp2 + domzp3 + domzp4 + domzp5 + domzp6 + domzp8 + domzp9 + domzp10, data = ZPcom)
+mm_Gzp <- model.matrix(~ zpSR + phyB + zpD + Envi1 + Envi2 + Envi3, data = ZPcom)
+mm_b_intn = model.matrix(~ domzp1 + domzp2 + domzp3 + domzp4 + domzp5 + domzp6 + domzp7 + domzp8 + domzp9 + domzp10, data = ZPcom)
 
 HM_Omni.dat <- # data list for Not region-denepdent but effects of zpSR depends on Omni analyses
   list(N = nrow(mm_Gzp), # number of obs
@@ -225,7 +225,7 @@ HM_Omni.dat <- # data list for Not region-denepdent but effects of zpSR depends 
        X_Gzp = mm_Gzp, # model matrix determining  Gz
        Gzp = ZPcom[,"Gzp"],
        
-       intn = ZPcom[,"interact"],
+       intn = ZPcom[,"zpSR"],
        K_bintn = ncol(mm_b_intn), # number of column of the model matrix for determining the effects of zpSR
        X_bintn = mm_b_intn # model matrix determining the effects of zpSR on Gz
        )
@@ -242,12 +242,12 @@ beta.sum = as.data.frame(param_Omni[["gamma_Gzp"]]) %>%
   group_by(gamma_Gzp_n) %>%
   summarize(
     mean=mean(value),
-    lo95=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp_n"]]))*0.025],
-    lo90=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp_n"]]))*0.05],
-    hi90=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp_n"]]))*0.95],
-    hi95=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp_n"]]))*0.975]
+    lo95=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp"]]))*0.025],
+    lo90=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp"]]))*0.05],
+    hi90=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp"]]))*0.95],
+    hi95=sort(value)[nrow(as.data.frame(param_Omni[["gamma_Gzp"]]))*0.975]
   ) %>%
-  mutate(gamma_Gzp_n = c("Intercept", "ln_zpSR", "interaction",  "ln_phyB", "ln_zpD", "Envi1", "Envi2", "Envi3"),
+  mutate(gamma_Gzp_n = c("Intercept", "ln_zpSR", "Omni", "ln_phyB", "ln_zpD", "Envi1", "Envi2", "Envi3", "interaction"),
          beta = gamma_Gzp_n) %>%
   select(-gamma_Gzp_n)
 write.table(beta.sum, file = "D:/Research/OmniBEF_FieldNLA_public/stanFieldNLA_Omni_beta.csv", 
@@ -258,15 +258,17 @@ b.sum = as.data.frame(param_Omni[["gamma_beta_intn"]]) %>%
   group_by(gamma_beta_intn) %>%
   summarize(
     mean=mean(value),
-    lo95=sort(value)[nrow(as.data.frame(param_Omni2No_Reg[["gamma_beta_intn"]]))*0.025],
-    lo90=sort(value)[nrow(as.data.frame(param_Omni2No_Reg[["gamma_beta_intn"]]))*0.05],
-    hi90=sort(value)[nrow(as.data.frame(param_Omni2No_Reg[["gamma_beta_intn"]]))*0.95],
-    hi95=sort(value)[nrow(as.data.frame(param_Omni2No_Reg[["gamma_beta_intn"]]))*0.975]
+    lo95=sort(value)[nrow(as.data.frame(param_Omni[["gamma_beta_intn"]]))*0.025],
+    lo90=sort(value)[nrow(as.data.frame(param_Omni[["gamma_beta_intn"]]))*0.05],
+    hi90=sort(value)[nrow(as.data.frame(param_Omni[["gamma_beta_intn"]]))*0.95],
+    hi95=sort(value)[nrow(as.data.frame(param_Omni[["gamma_beta_intn"]]))*0.975]
   ) %>%
-  mutate(gamma_beta_intn = c("Intercept", "domzp1", "domzp2", "domzp3", "domzp4", "domzp5", "domzp6", "domzp8", "domzp9", "domzp10"),
+  mutate(gamma_beta_intn = c("Intercept", "domzp1", "domzp2", "domzp3", "domzp4", "domzp5", 
+                             "domzp6", "domzp7", "domzp8", "domzp9", "domzp10"),
          beta = gamma_beta_intn) %>%
   select(-gamma_beta_intn)
-write.table(b.sum, file = "D:/Research/OmniBEF_NLA/RData/stanNLA_Omni2No_Reg07_b.csv", sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(b.sum, file = "D:/Research/OmniBEF_FieldNLA_public/stanFieldNLA_Omni_b.csv", 
+            sep = ",", col.names = TRUE, row.names = FALSE)
 
 phy_pred = colMeans(as.data.frame(param_Omni2No_Reg[["y_pred"]])) # extracting the estimated means of each measurement
 write.table(phy_pred, file = "D:/Research/OmniBEF_NLA/RData/stanNLA_Omni2No_Reg07_pred.csv", sep = ",", col.names = FALSE, row.names = FALSE)
@@ -284,8 +286,27 @@ rss_07to12 = sum((phy_pred_07to12 - bio_07to12[,"ln_phyDen"])^2)
 totalrss_07to12 = sum((mean(bio_07to12[,"ln_phyDen"]) - bio_07to12[,"ln_phyDen"])^2)
 R2_07to12 = 1 - (rss_07to12/totalrss_07to12)
 R2_07to12
-
-
-
-
 ######## HM model ###########################################################################################################
+
+glm_f  <- glm(Gzp ~ zpSR*(domzp1 + domzp2 + domzp3 + domzp4 + domzp5 + domzp6 + domzp7 + domzp8 + domzp9 + domzp10) + 
+                    phyB + zpD + Envi1 + Envi2 + Envi3, data = ZPcom)
+summary(glm_f)
+
+ZPcom <-  ZPcom %>% mutate(domzp10q = domzp10^2)
+glm_single  <- glm(Gzp ~ zpSR*(domzp10) + phyB + zpD + Envi1 + Envi2 + Envi3, data = ZPcom)
+summary(glm_single)
+
+plot(Gzp ~ domzp10, data = ZPcom)
+
+mod <- "
+  Gzp ~ zpSR + domzp10 + zpSR:domzp10 + zpD + phyB
+  zpSR ~ Envi1 + Envi2 + Envi3
+  zpD ~ Envi1 + Envi2 + Envi3
+  phyB ~ Envi1 + Envi2 + Envi3
+  
+  zpD ~~ phyB
+"
+mod_lavaan <- sem(mod, data = ZPcom, meanstructure = TRUE)
+summary(mod_lavaan)
+fitMeasures(mod_lavaan)
+ZPcom$domzp10
