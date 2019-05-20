@@ -235,38 +235,22 @@ Field.scale <- Field.scale %>%
   mutate(Envi1 = enviPC1, Envi2 = enviPC2, Envi3 = enviPC3)
 ##### PCA on envi variables #####
 
-##### running models with GLM #####
-glm_f  <- glm(Gzp ~ zpSR*Omnip + phyB + zpD + Envi1 + Envi2 + Envi3, data = Field.scale)
-summary(glm_f)
-# write.table(
-#   as.data.frame(rbind(summary(glm_f)$coefficient[,"Estimate"],
-#                       summary(glm_f)$coefficient[,"Estimate"] + summary(glm_f)$coefficient[,"Std. Error"]*qnorm(0.975),
-#                       summary(glm_f)$coefficient[,"Estimate"] - summary(glm_f)$coefficient[,"Std. Error"]*qnorm(0.975))),
-#   file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Field_GLM_ModSum.csv", sep = ",", col.names = TRUE)
-##### running models with GLM #####
-
-##### running model with SEM #####
-mod <- "
-  Gzp ~ zpSR + Omnip + zpSR:Omnip + zpD + phyB
-  zpSR ~ Envi1 + Envi2 + Envi3
-  zpD ~ Envi1 + Envi2 + Envi3
-  phyB ~ Envi1 + Envi2 + Envi3
-  
-  zpD ~~ phyB
-"
-mod_lavaan <- sem(mod, data = Field.scale, meanstructure = TRUE)
-summary(mod_lavaan)
-fitMeasures(mod_lavaan)
-##### running model with SEM #####
-######### Field analyses #########
-
-######### Fig 3_zpSR and G VS Omni #########
 ##### preping zp composition data #####
 Bio.raw <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_raw.csv", sep = ",", header = TRUE) %>%
   subset(select = c(Samp_ID, zpSR, phySR, zpD, phyB, All_Omni_prop, All_gzp, mzp_gzp, pH, Temp, Cond, PAR, TN_mean, TP_mean)) %>%
   mutate(Samp_ID = as.character(Samp_ID))
 colnames(Bio.raw) <- c("Samp_ID", "zpSR", "phySR", "zpD", "phyB", "Omnip", "Gzp", "mzpGzp",
                        "pH", "Temp", "Cond", "PAR", "TN", "TP")
+
+Bio.scale <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_scale.csv", 
+                        sep = ",", header = TRUE) %>%
+  mutate(Envi1 = enviPC1, Envi2 = enviPC2, Envi3 = enviPC3) %>%
+  subset(select = c(Samp_ID, zpSR, phySR, zpD, phyB, All_Omni_prop, All_gzp, mzp_gzp, 
+                    pH, Temp, Cond, PAR, TN_mean, TP_mean, Envi1, Envi2, Envi3)) %>%
+  mutate(Samp_ID = as.character(Samp_ID))
+colnames(Bio.scale) <- c("Samp_ID", "zpSR", "phySR", "zpD", "phyB", "Omnip", "Gzp", "mzpGzp",
+                         "pH", "Temp", "Cond", "PAR", "TN", "TP", "Envi1", "Envi2", "Envi3")
+
 
 ZP_ID <- read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
                   sep = ",", header = TRUE, fill = TRUE) %>%
@@ -304,11 +288,11 @@ for (i in 1 : length(unique(ZP_ID$Samp_ID))){
 }
 
 ZPcom <- ZPcom %>%
-  right_join(Bio.raw, by = "Samp_ID") %>%
+  right_join(Bio.scale, by = "Samp_ID") %>%
   right_join(read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
                       sep = ",", header = TRUE, fill = TRUE) %>%
                mutate(Samp_ID = as.character(Samp_ID)) %>%
-               subset(Samp_ID %in% Bio.raw$Samp_ID) %>%
+               subset(Samp_ID %in% Bio.scale$Samp_ID) %>%
                group_by(Samp_ID) %>%
                summarize(
                  Omni_pt = sum(count[which(FFG != "Herbivores")]) / sum(count),
@@ -318,6 +302,177 @@ ZPcom <- ZPcom %>%
 # write.table(ZPcom, file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/SPcount/Field_zpComm.csv",
 #             sep = ",", col.names = TRUE, row.names = FALSE)
 ##### preping zp composition data #####
+##### zp abund rank #####
+zp_rank.p <- zpSAD_ord %>%
+  ggplot() + 
+  geom_bar(aes(x = FAMILY_ord, y = avgDen), stat = "identity", width = 0.8,  position = "dodge2") + 
+  scale_fill_manual(name = "") + 
+  labs(x = "Zooplankton family",
+       y = expression("Average density (ind./mL)")) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.6, size = 24),
+        axis.text.y = element_text(size = 24),
+        axis.title = element_text(size = 32, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
+        #axis.title.y.right = element_text(size = 32, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
+        plot.margin = margin(t = 24, r = 36, b = 24, l = 36, "pt"),
+        legend.position = c(0, 0.95), 
+        legend.title = element_text(size = 24), 
+        legend.text = element_text(size = 24))
+# ggsave(zp_rank.p,
+#        file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/SupFigs/FigS3_zp_AbundRank.tiff",
+#        width = 58, height = 32, units = c("cm"),
+#        dpi = 600)
+zpSAD_ord <- zpSAD_ord %>% mutate(prop = avgDen/sum(avgDen))
+sum(zpSAD_ord$prop[21])
+
+for(i in 1:10){
+  domTSN <- as.character(unique(ZP_ID[which(ZP_ID$FAMILY %in% as.character(zpSAD_ord$FAMILY[i])),"TSN"]))
+  if (length(domTSN)>1){
+    ZPcom[, paste0("domzp", i)] <- rowSums(ZPcom[, domTSN])/(Bio.raw[, "zpD"]*1000)
+  }else{ZPcom[, paste0("domzp", i)] <- ZPcom[, domTSN]/(Bio.raw[, "zpD"]*1000)}
+}
+##### zp abund rank #####
+
+##### running models with GLM #####
+glm_f  <- glm(Gzp ~ zpSR*Omnip + phyB + zpD + Envi1 + Envi2 + Envi3, data = Field.scale)
+summary(glm_f)
+# write.table(
+#   as.data.frame(rbind(summary(glm_f)$coefficient[,"Estimate"],
+#                       summary(glm_f)$coefficient[,"Estimate"] + summary(glm_f)$coefficient[,"Std. Error"]*qnorm(0.975),
+#                       summary(glm_f)$coefficient[,"Estimate"] - summary(glm_f)$coefficient[,"Std. Error"]*qnorm(0.975))),
+#   file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Field_GLM_ModSum.csv", sep = ",", col.names = TRUE)
+##### running models with GLM #####
+
+##### running model with SEM #####
+mod <- "
+  Gzp ~ zpSR + Omnip + zpSR:Omnip + zpD + phyB
+  zpSR ~ Envi1 + Envi2 + Envi3
+  zpD ~ Envi1 + Envi2 + Envi3
+  phyB ~ Envi1 + Envi2 + Envi3
+  
+  zpD ~~ phyB
+"
+mod_lavaan <- sem(mod, data = Field.scale, meanstructure = TRUE)
+summary(mod_lavaan)
+fitMeasures(mod_lavaan)
+##### running model with SEM #####
+
+######## GLM model ########
+glm_single  <- glm(Gzp ~ zpSR + zpSR*domzp10 + phyB + zpD + Envi1 + Envi2 + Envi3, data = ZPcom)
+summary(glm_single)
+
+mod <- "
+  Gzp ~ zpSR + Omnip + zpSR:Omnip + zpSR:domzp10 + zpD + phyB
+  zpSR ~ Envi1 + Envi2 + Envi3
+  zpD ~ Envi1 + Envi2 + Envi3
+  phyB ~ Envi1 + Envi2 + Envi3
+  
+  zpD ~~ phyB
+"
+mod_lavaan <- sem(mod, data = ZPcom, meanstructure = TRUE)
+summary(mod_lavaan)
+fitMeasures(mod_lavaan)
+zpSAD_ord$FAMILY[10]
+######## GLM model ########
+
+######### Field analyses #########
+
+######### Fig 3_zpSR and G VS Omni #########
+##### preping zp composition data #####
+Bio.raw <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_raw.csv", sep = ",", header = TRUE) %>%
+  subset(select = c(Samp_ID, zpSR, phySR, zpD, phyB, All_Omni_prop, All_gzp, mzp_gzp, pH, Temp, Cond, PAR, TN_mean, TP_mean)) %>%
+  mutate(Samp_ID = as.character(Samp_ID))
+colnames(Bio.raw) <- c("Samp_ID", "zpSR", "phySR", "zpD", "phyB", "Omnip", "Gzp", "mzpGzp",
+                       "pH", "Temp", "Cond", "PAR", "TN", "TP")
+
+Bio.scale <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/FieldDat_scale.csv", 
+                        sep = ",", header = TRUE) %>%
+  mutate(Envi1 = enviPC1, Envi2 = enviPC2, Envi3 = enviPC3) %>%
+  subset(select = c(Samp_ID, zpSR, phySR, zpD, phyB, All_Omni_prop, All_gzp, mzp_gzp, 
+                    pH, Temp, Cond, PAR, TN_mean, TP_mean, Envi1, Envi2, Envi3)) %>%
+  mutate(Samp_ID = as.character(Samp_ID))
+colnames(Bio.scale) <- c("Samp_ID", "zpSR", "phySR", "zpD", "phyB", "Omnip", "Gzp", "mzpGzp",
+                         "pH", "Temp", "Cond", "PAR", "TN", "TP", "Envi1", "Envi2", "Envi3")
+
+
+ZP_ID <- read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
+                  sep = ",", header = TRUE, fill = TRUE) %>%
+  mutate(Samp_ID = as.character(Samp_ID)) %>%
+  subset(Samp_ID %in% Bio.raw$Samp_ID)
+# write.table(ZP_ID[which(duplicated(ZP_ID$TSN) == FALSE),] %>% subset(select = -c(SITE_ID, Samp_ID, count, Vol, Den)),
+#             file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/SPcount/Field_zpSPList.csv", 
+#             sep = ",", col.names = TRUE, row.names = FALSE)
+
+zpSAD <- ZP_ID %>%
+  group_by(FAMILY, FFG) %>%
+  summarize(avgDen = mean(Den),
+            sumDen = sum(Den))
+zpSAD[which(zpSAD$FFG == "Herbivores"),"FG"] <- "H"
+zpSAD[which(zpSAD$FFG != "Herbivores"),"FG"] <- "N"
+zpSAD_ord <- zpSAD[,which(names(zpSAD) != "FFG")] %>%
+  subset(FAMILY != "") %>%
+  group_by(FAMILY, FG) %>%
+  summarize(avgDen = sum(avgDen)) %>%
+  arrange(desc(avgDen)) %>%
+  ungroup() %>%
+  mutate(FAMILY_ord = paste0(FAMILY, "_", FG)) %>%
+  mutate(FAMILY_ord = factor(as.factor(FAMILY_ord), levels = FAMILY_ord)) 
+
+ZPcom <- as.data.frame(matrix(0, length(unique(ZP_ID$Samp_ID)), length(unique(ZP_ID$TSN)) + 1))
+colnames(ZPcom) <- c("Samp_ID", as.character(unique(ZP_ID$TSN)))
+
+for (i in 1 : length(unique(ZP_ID$Samp_ID))){
+  ZPcom[i, "Samp_ID"] <- unique(ZP_ID$Samp_ID)[i]
+  temp <- ZP_ID[which(ZP_ID$Samp_ID == unique(ZP_ID$Samp_ID)[i]),]
+  
+  for (j in colnames(ZPcom)[which(colnames(ZPcom) %in% unique(temp$TSN))]){
+    ZPcom[i, which(colnames(ZPcom) == j)] <- sum(temp[which(temp$TSN == j), "Den"]) * 1000
+  }
+}
+
+ZPcom <- ZPcom %>%
+  right_join(Bio.scale, by = "Samp_ID") %>%
+  right_join(read.csv(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/Field_zpCount.csv", 
+                      sep = ",", header = TRUE, fill = TRUE) %>%
+               mutate(Samp_ID = as.character(Samp_ID)) %>%
+               subset(Samp_ID %in% Bio.scale$Samp_ID) %>%
+               group_by(Samp_ID) %>%
+               summarize(
+                 Omni_pt = sum(count[which(FFG != "Herbivores")]) / sum(count),
+                 Omni_abspt = length(which(FFG != "Herbivores"))
+               ), 
+             by = "Samp_ID")
+# write.table(ZPcom, file = "D:/Research/OmniBEF_FieldExp/FieldExp_Data/SPcount/Field_zpComm.csv",
+#             sep = ",", col.names = TRUE, row.names = FALSE)
+##### preping zp composition data #####
+##### zp abund rank #####
+zp_rank.p <- zpSAD_ord %>%
+  ggplot() + 
+  geom_bar(aes(x = FAMILY_ord, y = avgDen), stat = "identity", width = 0.8,  position = "dodge2") + 
+  scale_fill_manual(name = "") + 
+  labs(x = "Zooplankton family",
+       y = expression("Average density (ind./mL)")) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.6, size = 24),
+        axis.text.y = element_text(size = 24),
+        axis.title = element_text(size = 32, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
+        #axis.title.y.right = element_text(size = 32, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
+        plot.margin = margin(t = 24, r = 36, b = 24, l = 36, "pt"),
+        legend.position = c(0, 0.95), 
+        legend.title = element_text(size = 24), 
+        legend.text = element_text(size = 24))
+# ggsave(zp_rank.p,
+#        file = "D:/Manuscript/IGP_DivEffects_MS/MS_dissertation/MS_Field_NLA/Figs/SupFigs/FigS3_zp_AbundRank.tiff",
+#        width = 58, height = 32, units = c("cm"),
+#        dpi = 600)
+zpSAD_ord <- zpSAD_ord %>% mutate(prop = avgDen/sum(avgDen))
+sum(zpSAD_ord$prop[1:10])
+##### zp abund rank #####
+
+for(i in 1:10){
+  domTSN <- as.character(unique(ZP_ID[which(ZP_ID$FAMILY %in% as.character(zpSAD_ord$FAMILY[i])),"TSN"]))
+  if (length(domTSN)>1){
+    ZPcom[, paste0("domzp", i)] <- rowSums(ZPcom[, domTSN])/(Bio.raw[, "zpD"]*1000)
+  }else{ZPcom[, paste0("domzp", i)] <- ZPcom[, domTSN]/(Bio.raw[, "zpD"]*1000)}
+}
 ##### panel a Omnip ~ zpSR #####
 A_zpSR_Omni <- ZPcom %>%
   ggplot() + 
@@ -538,24 +693,6 @@ zpSAD_ord$FAMILY[8]
 # R2_07to12
 ######## HM model with stan ########
 
-######## GLM model ########
-glm_single  <- glm(Gzp ~ zpSR*(domzp10) + phyB + zpD + Envi1 + Envi2 + Envi3, data = ZPcom)
-summary(glm_single)
-
-mod <- "
-  Gzp ~ zpSR + domzp10 + zpSR:domzp10 + zpD + phyB
-  zpSR ~ Envi1 + Envi2 + Envi3
-  zpD ~ Envi1 + Envi2 + Envi3
-  phyB ~ Envi1 + Envi2 + Envi3
-  
-  zpD ~~ phyB
-"
-mod_lavaan <- sem(mod, data = ZPcom, meanstructure = TRUE)
-summary(mod_lavaan)
-fitMeasures(mod_lavaan)
-zpSAD_ord$FAMILY[10]
-######## GLM model ########
-
 ##### panel a, b Cyclops, Daphnia ~ Omni #####
 A_Cyclops_Omni <- ZPcom %>%
   ggplot() + 
@@ -735,8 +872,6 @@ NLA12_Corr <- plot_grid(
 #        file = "D:/Manuscript/IGP_DivEffects_MS_Figs/Field_NLA_Figs/SupFigs/FieldNLA_fs1_2_NLA12_Corr.pdf", 
 #        width = 40, height = 40, units = c("cm"), dpi = 600)
 ######### Fig S1_NLA correlation plots ##########
-
-
 
 ######## Loading necessary libraries ########################################################################################
 if (!require(tidyverse)) {
