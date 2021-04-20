@@ -374,6 +374,46 @@ summary(lm(Gzp_raw~ domzp8 , data = ZPcom))
 
 ######### Field analyses #########
 
+A_Gzp_zpSR <-  ZPcom%>% #Field.scale
+  ggplot() + 
+  geom_point(aes(x = zpSR_raw, y = Gzp_raw), size = 7) + 
+  geom_smooth(aes(x = zpSR_raw, y = Gzp_raw), formula = "y ~ x", se = TRUE, method = "lm", color = "blue", linetype = "solid", size = 3) + 
+  # scale_x_continuous(expand = c(0, 0), limits = c(-2.5, 75)) + 
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.9)) + 
+  labs(x = expression("Zooplankton taxonomic richness"),
+       y = "Phytoplankton grazing mortality") +
+  theme(panel.background = element_blank(),
+        plot.margin = margin(t = 24, r = 36, b = 0, l = 12, "pt"),
+        axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(size = 24),
+        axis.text.y = element_text(size = 24),
+        axis.title.x = element_text(size = 42, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
+        axis.title.y = element_text(size = 42, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt"))
+        )
+A_Gzp_zpSR
+ggsave(A_Gzp_zpSR, file = "D:/Dropbox/Application/IONTU/JobTalk/Gzp_zpSR.png",
+       dpi = 600, width = 48, height = 36, units = "cm")
+
+A_Gzp_Omni <-  ZPcom %>% #Field.scale
+  ggplot() + 
+  geom_point(aes(x = Omni_pt, y = Gzp_raw), size = 7) + 
+  #geom_smooth(aes(x = Omni_pt, y = Gzp_raw), formula = "y ~ x", se = TRUE, method = "lm", color = "blue", linetype = "solid", size = 3) + 
+  # scale_x_continuous(expand = c(0, 0), limits = c(-2.5, 75)) + 
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.9)) + 
+  labs(x = expression("Omnivorous consumption"),
+       y = "Phytoplankton grazing mortality") +
+  theme(panel.background = element_blank(),
+        plot.margin = margin(t = 24, r = 36, b = 0, l = 12, "pt"),
+        axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(size = 24),
+        axis.text.y = element_text(size = 24),
+        axis.title.x = element_text(size = 42, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt")),
+        axis.title.y = element_text(size = 42, margin = margin(t = 24, r = 24, b = 24, l = 24, "pt"))
+  )
+A_Gzp_Omni
+ggsave(A_Gzp_Omni, file = "D:/Dropbox/Application/IONTU/JobTalk/Gzp_Omni.png",
+       dpi = 600, width = 48, height = 36, units = "cm")
+
 ######### Fig 3_zpSR and G VS Omni #########
 ##### panel a Omnip ~ zpSR #####
 A_zpSR_Omni <- ZPcom %>%
