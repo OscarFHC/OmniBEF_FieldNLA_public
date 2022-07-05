@@ -738,7 +738,7 @@ if (!require(grid)) {
 ######### Site maps ##########
 Lake <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/LakeforMap.csv", 
                    sep = ",", header = TRUE)
-img <- readPNG("D:/Research/OmniBEF_FieldExp/flowCAM pics/home.png")
+img <- readPNG("D:/Dropbox/Research/OmniBEF_FieldExp/flowCAM pics/home.png")
 home <- rasterGrob(img, interpolate = TRUE) 
 
 map.MI <- map_data("state", c("michigan:south"), boundary = TRUE, interior = FALSE)
@@ -767,9 +767,16 @@ SiteMap <- ggplot() +
 # ggsave(plot = SiteMap, width = 5.37*5, height = 5*5, units = "cm",
 #        file = "D:/Manuscript/IGP_DivEffects_MS_Figs/Field_NLA_Figs/SiteMap.png", dpi = 1200)
 
+
+NLA07 <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio07_unscaled_raw.csv", 
+                    sep = ",", header = TRUE)
+NLA12 <- read.table(file = "https://raw.githubusercontent.com/OscarFHC/OmniBEF_FieldNLA_public/master/bio12_unscaled_raw.csv", 
+                    sep = ",", header = TRUE)
 map.US <- map_data("usa", boundary = TRUE, interior = FALSE)
 USMap <- ggplot() + 
   geom_polygon(data = map.US, aes(x = long, y = lat, group = group), fill = NA, color = "black") + 
+  geom_point(data = NLA07, aes(x = LON_DD, y = LAT_DD), size = 1, color = "dark blue") + 
+  geom_point(data = NLA12, aes(x = LON_DD, y = LAT_DD), size = 1, color = "dark green") + 
   coord_fixed(1.3) +
   labs(x = "Longitude", y = "Latitude") + 
   theme_bw() +
@@ -781,8 +788,8 @@ USMap <- ggplot() +
         axis.title.x = element_text(size = 24, margin = margin(t = 6, r = 0, b = 6, l = 0, "pt"), hjust = 0.5),
         axis.title.y = element_text(size = 24, margin = margin(t = 0, r = 12, b = 0, l = 0, "pt")),
         axis.text = element_text(size = 28))
-# ggsave(plot = USMap, width = 5.37*5, height = 5*5, units = "cm",
-#        file = "D:/Manuscript/IGP_DivEffects_MS_Figs/Field_NLA_Figs/USMap.png", dpi = 1200)
+# ggsave(plot = USMap, file = "D:/Dropbox/Manuscripts/IGP_DivEffects_MS_Figs/Field_NLA_Figs/USMap.png",
+#        dpi = 600, width = 27, height = 25, units = "cm")
 
 # ggdraw() +
 #   draw_plot(USMap + theme(legend.justification = "bottom"), 0, 0, 1, 1) +
